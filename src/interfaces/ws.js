@@ -621,6 +621,7 @@ function wrapWithverifyWS(securityStrategy, spark, theFunction) {
   return msg => {
     try {
       securityStrategy.verifyWS(spark.request)
+      theFunction(msg)
     } catch (error) {
       if (!spark.skPendingAccessRequest) {
         spark.end(
@@ -628,9 +629,9 @@ function wrapWithverifyWS(securityStrategy, spark, theFunction) {
           { reconnect: true }
         )
       }
+      console.error(error)
       return
     }
-    theFunction(msg)
   }
 }
 
