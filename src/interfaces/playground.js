@@ -30,10 +30,11 @@ const {
 const serverRoutesPrefix = '/skServer'
 
 module.exports = function(app) {
+  const n2kMapper = new N2kMapper({ app }, app.propertyValues)
+  const parser = new FromPgn({}, app.propertyValues)
+  
   const processors = {
     n2k: msgs => {
-      const n2kMapper = new N2kMapper({ app })
-      const parser = new FromPgn()
       const n2kJson = []
       const deltas = msgs.map(msg => {
         const n2k = parser.parseString(msg)
@@ -49,7 +50,7 @@ module.exports = function(app) {
       return { deltas: msgs.map(parser.parse.bind(parser)) }
     },
     'n2k-json': msgs => {
-      return { deltas: processors.n2k(msgs.map(pgnToActisenseSerialFormat)) }
+      return processors.n2k(msgs.map(pgnToActisenseSerialFormat)) 
     }
   }
 
